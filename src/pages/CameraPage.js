@@ -137,10 +137,9 @@ function CameraPage() {
 
     return (
         <Container sx={{
-            backgroundImage: "linear-gradient(180deg, #80FF72, #7EE8FA)",
+
             color: "white",
             padding: '5em',
-            boxShadow: "10px 10px 8px #888888"
         }}>
 
             <div>
@@ -232,7 +231,7 @@ function CameraPage() {
                             </>
                             :
                             <Button variant="filled" sx={{
-                                margin: "2em",
+                                margin: "2em 2em 2em 2em",
                                 borderRadius: "11px",
                                 border: "1px solid white",
                                 color: "white",
@@ -255,7 +254,7 @@ function CameraPage() {
                         {toggle ?
                             <>
                                 <div style={{ position: 'relative', paddingBottom: '56.25%', paddingTop: '0', height: '0' }}>
-                                    <video src="your-video.mp4" controls style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: '100%' }} ref={videoRef} autoPlay={true}></video>
+                                    <video src="your-video.mp4" style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: '100%' }} ref={videoRef} autoPlay={true}></video>
                                 </div>
                                 {/* <video ref={videoRef} autoPlay={true}></video> */}
                                 <br />
@@ -315,7 +314,7 @@ function CameraPage() {
                             //This is Camera
 
                             <Button variant="filled" sx={{
-                                margin: "2em",
+                                margin: "2em 2em 30em 2em",
                                 borderRadius: "11px",
                                 border: "1px solid white",
                                 color: "white",
