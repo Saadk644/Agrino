@@ -23,17 +23,31 @@ const useStyles = makeStyles({
             display: 'none',
             boder: 'none'
         },
+    },
+    colorStatus:{
+       paddingTop:"1.5em" 
+    },
+    circle:{
+        position:'absolute',
+        zIndex:'100',
+        border:"4px solid white",
+        width: '25rem',
+        height: '20rem',
+        // borderRadius: '50%',
+        
     }
 });
 function CameraPage() {
     const classes = useStyles();
     const [imageSrc, setImageSrc] = useState(null);
-    const [file, setfile] = useState()
     const [toggle, setToggle] = useState(false)
     const [stream, setStream] = useState(null);
     const [csfbr, setcsfbr] = useState()
+    const [color, setColor] = useState()
     const videoRef = useRef(null);
     const imageRef = useRef(null);
+
+    // const [formdatastate,setFormData]=useState()
     useEffect(() => {
         var myHeaders = new Headers();
         // myHeaders.append("Cookie", "csrftoken=jvRIcOguHNm7cGv5NPUhdtyBIPqRCsAPc6tWAetqou1k9LgXIUyfW3i9yZU8Zyoq");
@@ -55,13 +69,14 @@ function CameraPage() {
 
     useEffect(() => {
         console.log("This is image Ref", imageSrc)
-
-  
+        var imageStr="";
+        if(imageSrc!=null){
+            imageStr=imageSrc.split(",")[1]
+        }
+        console.log("THis",imageStr)
         var myHeaders = new Headers();
-        // myHeaders.append("Cookie", "csrftoken=jvRIcOguHNm7cGv5NPUhdtyBIPqRCsAPc6tWAetqou1k9LgXIUyfW3i9yZU8Zyoq");
-
         var formdata = new FormData();
-        formdata.append("image", imageSrc);
+        formdata.append("data", imageStr);
         formdata.append("csrfToken", csfbr);
 
         var requestOptions = {
@@ -73,9 +88,16 @@ function CameraPage() {
 
         fetch("http://127.0.0.1:8000/", requestOptions)
             .then(response => response.json())
-            .then(result => console.log(result))
+            .then(result => {
+                console.log(result)
+                setColor(result?.color)
+            })
             .catch(error => console.log('error', error));
+
     }, [imageSrc])
+
+
+
     const handleStartCamera = (e) => {
         if (e == "Open") {
             setToggle(!toggle)
@@ -107,24 +129,13 @@ function CameraPage() {
             );
         const dataUrl = canvas.toDataURL('image/png');
         setImageSrc(dataUrl);
-     
+
     };
 
     const handleCloseCamera = () => {
         setToggle(!toggle)
         window.location.reload(false)
-        // navigator.mediaDevices
-        //     .getUserMedia({ video: true })
-        //     .then((stream) => {
-        //         videoRef.current.srcObject = stream;
-        //         setStream(stream);
-        //     })
-        //     .catch((error) => console.error(error));
-        // // if (stream) {
-        // stream.getTracks().forEach((track) => track.stop());
-        // setStream(null);
-        // setImageSrc(null);
-        // }
+      
     };
     const handleCloseCameraButton = () => {
 
@@ -166,11 +177,7 @@ function CameraPage() {
             </div>
             <div>
                 {imageSrc ? (
-                    // <div>
-                    //     <img ref={imageRef} src={imageSrc} />
-                    //     <button onClick={() => setImageSrc(null)}>Retake Picture</button>
-                    //     <button onClick={handleCloseCamera}>Close Camera</button>
-                    // </div>
+                  
                     <center>
 
                         <br />
@@ -178,6 +185,15 @@ function CameraPage() {
                             <>
                                 <div style={{ position: 'relative', paddingBottom: '56.25%', paddingTop: '0', height: '0' }}>
                                     <img src={imageSrc} style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: '100%' }} />
+                                <div style={{display:"flex",justifyContent:"center",alignItems:"center",height:"90vh"}}>
+                                    <div className={classes.circle}>
+                                        <span><h6>Targeted Area</h6></span>
+                                    </div>
+                                </div>
+                                </div>
+                               
+                                <div className={classes.colorStatus}>
+                                    <h2><strong>RGB Code: </strong>{color}</h2>
                                 </div>
                                 <br /><br /><br />
                                 <div style={{
@@ -255,6 +271,11 @@ function CameraPage() {
                             <>
                                 <div style={{ position: 'relative', paddingBottom: '56.25%', paddingTop: '0', height: '0' }}>
                                     <video src="your-video.mp4" style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: '100%' }} ref={videoRef} autoPlay={true}></video>
+                                    <div style={{display:"flex",justifyContent:"center",alignItems:"center",height:"90vh"}}>
+                                    <div className={classes.circle}>
+                                        <span style={{display:"flex",justifyContent:"center",alignItems:"center" ,width:"100%",height:"100%",fontSize:"0.5em"}}><h6>Targeted Area</h6></span>
+                                    </div>
+                                </div>
                                 </div>
                                 {/* <video ref={videoRef} autoPlay={true}></video> */}
                                 <br />
