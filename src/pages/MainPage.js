@@ -8,10 +8,8 @@ function MainPage() {
     }
     return (
         <Container sx={{
-            backgroundImage: "linear-gradient(180deg, #80FF72, #7EE8FA)",
             color: "white",
-            padding: '5em',
-            boxShadow: "10px 10px 8px #888888"
+            padding: '5em'
         }}>
             <center>
                 <Typography variant="h2" sx={{
@@ -26,7 +24,7 @@ function MainPage() {
                 </Typography>
                 <Button variant="filled"
                     sx={{
-                        margin: "2em",
+                        margin: "2em 2em 30em 2em",
                         borderRadius: "11px",
                         border: "1px solid white",
                         color: "white",
