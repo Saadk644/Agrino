@@ -3,12 +3,12 @@ import { Button, Container, Typography, Grid } from "@mui/material";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import UploadFile from "@mui/icons-material/UploadFile";
+import ArrowRightAlt from "@mui/icons-material/ArrowRightAlt";
 import { makeStyles } from "@mui/styles";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import { styled } from "@mui/system";
 import Loader from "../ui/Loader";
 import { useNavigate } from "react-router-dom";
-
 
 const useStyles = makeStyles({
 	typography: {
@@ -48,7 +48,7 @@ const StyledForm = styled("form")(({ theme }) => ({
 	gap: theme.spacing(2),
 }));
 function CameraPage() {
-    const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const classes = useStyles();
 	const [selectedFile, setSelectedFile] = useState(null);
@@ -145,7 +145,7 @@ function CameraPage() {
 
 	const handleCloseCamera = () => {
 		setToggle(!toggle);
-		window.location.reload(false);
+		window.location.reload(false)
 	};
 	const handleCloseCameraButton = () => {
 		if (stream) {
@@ -159,14 +159,22 @@ function CameraPage() {
 		e.preventDefault();
 		// Perform your submit logic here
 		console.log(selectedFile);
-        setLoading(true);
-        
+		setLoading(true);
+
 		const timeout = setTimeout(() => {
-            setLoading(false);
-            navigate("/detail")
+			setLoading(false);
+			navigate("/detail");
 		}, 3000);
 
 		return () => clearTimeout(timeout);
+	};
+
+	const proceedHandler = async () => {
+		if (stream) {
+			await stream.getTracks().forEach((track) => track.stop());
+			setStream(null);
+		}
+		navigate("/detail");
 	};
 
 	return (
@@ -273,6 +281,28 @@ function CameraPage() {
 										onClick={() => handleStartCamera("Retake")}
 									>
 										<span className={classes.takePicture}>Retake Picture</span>
+									</Button>
+
+									<Button
+										variant="filled"
+										sx={{
+											margin: "2em",
+											borderRadius: "11px",
+											border: "1px solid white",
+											color: "white",
+											"&:hover": {
+												color: "black",
+												borderRadius: "11px",
+												border: "1px solid black",
+											},
+											"@media (max-width: 600px)": {
+												border: "none",
+											},
+										}}
+										startIcon={<ArrowRightAlt />}
+										onClick={proceedHandler}
+									>
+										<span className={classes.takePicture}>Proceed</span>
 									</Button>
 
 									<Button
