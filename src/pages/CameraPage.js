@@ -173,7 +173,7 @@ function CameraPage() {
 		<Container
 			sx={{
 				color: "white",
-				padding: "5em",
+				padding: "5em 1em",
 			}}
 		>
 			{loading && <Loader />}

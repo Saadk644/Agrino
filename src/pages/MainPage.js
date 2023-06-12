@@ -9,7 +9,7 @@ function MainPage() {
     return (
         <Container sx={{
             color: "white",
-            padding: '5em'
+            padding: '5em 1em'
         }}>
             <center>
                 <Typography variant="h2" sx={{

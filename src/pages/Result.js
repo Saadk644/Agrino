@@ -21,7 +21,7 @@ function Result() {
 			style={{ height: "100vh" }}
 			sx={{
 				color: "white",
-				padding: "5em",
+				padding: "5em 1em",
 			}}
 		>
 			<center>
@@ -39,6 +39,7 @@ function Result() {
 						</Row>
 					</div>
 				</Container>
+				<div className="table-responsive">
 				<table class="table table-success mt-5" style={{backgroundColor: 'transparent'}}>
 					<thead>
 						<tr>
@@ -70,6 +71,7 @@ function Result() {
 						</tr>
 					</tbody>
 				</table>
+				</div>
 			</center>
 		</Container>
 	);
