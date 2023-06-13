@@ -89,7 +89,7 @@ function CameraPage() {
 			var formdata = new FormData();
 			formdata.append("file",  dataURLToFile(imageSrc, "image.png"));
 
-			const url = process.env.REACT_APP_BACKEND_URL;
+			const url = 'http://142.93.255.174:3006/';
 
 			const options = {
 				method: "POST",
@@ -163,7 +163,7 @@ function CameraPage() {
 		const formdata = new FormData();
 		formdata.append("file", selectedFile);
 
-		const url = process.env.REACT_APP_BACKEND_URL;
+		const url = 'http://142.93.255.174:3006/';
 		const options = {
 			method: "POST",
 			body: formdata,
