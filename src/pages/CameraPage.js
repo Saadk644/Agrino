@@ -9,6 +9,7 @@ import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import { styled } from "@mui/system";
 import Loader from "../ui/Loader";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const useStyles = makeStyles({
 	typography: {
@@ -56,62 +57,59 @@ function CameraPage() {
 	const [toggle, setToggle] = useState(false);
 	const [uploadImage, setUploadImage] = useState(false);
 	const [stream, setStream] = useState(null);
-	const [csfbr, setcsfbr] = useState();
 	const [color, setColor] = useState();
 	const videoRef = useRef(null);
 	const imageRef = useRef(null);
 	const [loading, setLoading] = useState(false);
+	const [result, setResult] = useState({});
 
 	const handleFileChange = (e) => {
 		setSelectedFile(e.target.files[0]);
 	};
 
-	// const [formdatastate,setFormData]=useState()
+	const dataURLToFile = (dataUrl, filename) => {
+		const arr = dataUrl.split(",");
+		const mime = arr[0].match(/:(.*?);/)[1];
+		const bstr = atob(arr[1]);
+		let n = bstr.length;
+		const u8arr = new Uint8Array(n);
+		while (n--) {
+		  u8arr[n] = bstr.charCodeAt(n);
+		}
+		return new File([u8arr], filename, { type: mime });
+	  };
+	  
 	useEffect(() => {
-		var myHeaders = new Headers();
-		// myHeaders.append("Cookie", "csrftoken=jvRIcOguHNm7cGv5NPUhdtyBIPqRCsAPc6tWAetqou1k9LgXIUyfW3i9yZU8Zyoq");
-
-		var requestOptions = {
-			method: "GET",
-			headers: myHeaders,
-			redirect: "follow",
-		};
-
-		fetch("http://127.0.0.1:8000/token", requestOptions)
-			.then((response) => response.json())
-			.then((result) => {
-				console.log(result);
-				setcsfbr(result.csrfToken);
-			})
-			.catch((error) => console.log("error", error));
-	}, []);
-
-	useEffect(() => {
-		console.log("This is image Ref", imageSrc);
 		var imageStr = "";
 		if (imageSrc != null) {
-			imageStr = imageSrc.split(",")[1];
+			console.log("This is image Ref", imageSrc);
+			setLoading(true)
+			// imageStr = imageSrc.split(",")[1];
+
+			var formdata = new FormData();
+			formdata.append("file",  dataURLToFile(imageSrc, "image.png"));
+
+			const url = `http://127.0.0.1:8000/`;
+			const options = {
+				method: "POST",
+				body: formdata,
+				processData: false,
+				contentType: false,
+				mimeType: "multipart/form-data",
+				headers: {
+					"X-CSRFToken": Cookies.get("csrftoken"),
+				},
+			};
+			fetch(url, options)
+				.then((response) => response.json())
+				.then((result) => {
+					console.log(result);
+					setColor(result?.color);
+					setLoading(false)
+					setResult(result)
+				})
+				.catch((error) => console.log("error", error));
 		}
-		console.log("THis", imageStr);
-		var myHeaders = new Headers();
-		var formdata = new FormData();
-		formdata.append("data", imageStr);
-		formdata.append("csrfToken", csfbr);
-
-		var requestOptions = {
-			method: "POST",
-			headers: myHeaders,
-			body: formdata,
-			redirect: "follow",
-		};
-
-		fetch("http://127.0.0.1:8000/", requestOptions)
-			.then((response) => response.json())
-			.then((result) => {
-				console.log(result);
-				setColor(result?.color);
-			})
-			.catch((error) => console.log("error", error));
 	}, [imageSrc]);
 
 	const handleStartCamera = (e) => {
@@ -145,7 +143,7 @@ function CameraPage() {
 
 	const handleCloseCamera = () => {
 		setToggle(!toggle);
-		window.location.reload(false)
+		window.location.reload(false);
 	};
 	const handleCloseCameraButton = () => {
 		if (stream) {
@@ -161,12 +159,29 @@ function CameraPage() {
 		console.log(selectedFile);
 		setLoading(true);
 
-		const timeout = setTimeout(() => {
-			setLoading(false);
-			navigate("/detail");
-		}, 3000);
+		const formdata = new FormData();
+		formdata.append("file", selectedFile);
 
-		return () => clearTimeout(timeout);
+		const url = `http://127.0.0.1:8000/`;
+		const options = {
+			method: "POST",
+			body: formdata,
+			processData: false,
+			contentType: false,
+			mimeType: "multipart/form-data",
+			headers: {
+				"X-CSRFToken": Cookies.get("csrftoken"),
+			},
+		};
+		fetch(url, options)
+			.then((response) => response.json())
+			.then((data) => {
+				console.log("Success:", data);
+				setLoading(false);
+				setResult(data)
+				navigate("/detail", {state: {value: data}});
+			});
+
 	};
 
 	const proceedHandler = async () => {
@@ -174,7 +189,7 @@ function CameraPage() {
 			await stream.getTracks().forEach((track) => track.stop());
 			setStream(null);
 		}
-		navigate("/detail");
+		navigate("/detail", {state: {value: result}});
 	};
 
 	return (

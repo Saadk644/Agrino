@@ -1,11 +1,13 @@
 import { Button, Container, Typography } from "@mui/material";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import React, {useState, useRef} from 'react'
 
 function Detail() {
 	const navigate = useNavigate();
+	const location = useLocation();
     const [error, setError] = useState(false)
+	const result = location.state?.value
     const area = useRef()
     const width = useRef()
     const height = useRef()
@@ -29,7 +31,7 @@ function Detail() {
 
             //perform calculations here
             const formula = parseFloat(data.width) * parseFloat(data.height) * 50
-            navigate("/results", { state: { value: formula } })
+            navigate("/results", { state: { value: formula, result: result } })
 
         }
 	};

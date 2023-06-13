@@ -9,6 +9,7 @@ import { useLocation } from "react-router-dom";
 function Result() {
 	const location = useLocation();
 	const value = location.state.value;
+	const result = location.state.result;
 
 
 	const styles = {
@@ -29,7 +30,12 @@ function Result() {
 					<div style={styles}>
 						<Row className="mb-4">
 							<Col>
-								<h2>Nitrogen Deficiency is <u> 10% </u></h2>
+								<h2>As Known, Nitrogen required per plant is 2% - 4 %</h2>
+							</Col>
+						</Row>
+						<Row className="mb-4">
+							<Col>
+								<h2>Nitrogen Deficiency found is <u> {result.deficiency_percent}% </u></h2>
 							</Col>
 						</Row>
 						<Row>
