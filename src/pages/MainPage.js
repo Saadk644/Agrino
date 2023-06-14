@@ -1,48 +1,533 @@
-import { Button, Container, Typography } from "@mui/material";
-import FunctionsIcon from '@mui/icons-material/Functions';
-import { useNavigate } from "react-router-dom";
-function MainPage() {
-    const navigate = useNavigate()
-    const handleRouting = () => {
-        navigate("/CameraPage")
-    }
-    return (
-        <Container sx={{
-            color: "white",
-            padding: '5em 1em'
-        }}>
-            <center>
-                <Typography variant="h2" sx={{
-                    padding: '1em',
-                }}>
-                    Agrino
-                </Typography>
-                <Typography variant="h4" sx={{
-                    padding: '1em',
-                }}>
-                    <p>Make your farm more efficient</p>
-                </Typography>
-                <Button variant="filled"
-                    sx={{
-                        margin: "2em 2em 30em 2em",
-                        borderRadius: "11px",
-                        border: "1px solid white",
-                        color: "white",
-                        "&:hover": {
-                            color: "black",
-                            border: "1px solid black",
-                        }
-                    }}
-                    startIcon={<FunctionsIcon />}
-                    onClick={handleRouting}
-                >
-                    Calculate Nitrogen Deficiency
-                </Button>
+import React, { useState, useRef, useEffect } from "react";
+import "../assets/css/index.css";
+import Topbar from "../ui/Navbar";
 
-                {/* <button type="button" class="btn btn-link border rounded-pill text-white text-decoration-none" onClick={handleRouting}>Calculate Nitroger Deficiency</button> */}
-            </center>
-        </Container >
-    );
+import Webcam from "react-webcam";
+
+import { Button, Container, Typography, Grid } from "@mui/material";
+import FunctionsIcon from "@mui/icons-material/Functions";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import UploadFile from "@mui/icons-material/UploadFile";
+import ArrowRightAlt from "@mui/icons-material/ArrowRightAlt";
+import { makeStyles } from "@mui/styles";
+import NotInterestedIcon from "@mui/icons-material/NotInterested";
+import { styled } from "@mui/system";
+import Loader from "../ui/Loader";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+
+const useStyles = makeStyles({
+	typography: {
+		padding: "1em",
+		fontSize: "2rem",
+		"@media (max-width: 600px)": {
+			fontSize: "1rem",
+		},
+	},
+	headerStyle: {
+		padding: "1em",
+		"@media (max-width: 600px)": {
+			fontSize: "1.7rem",
+		},
+	},
+	takePicture: {
+		"@media (max-width: 600px)": {
+			// display: "none",
+			// boder: "none",
+		},
+	},
+	colorStatus: {
+		paddingTop: "1.5em",
+	},
+	circle: {
+		position: "absolute",
+		zIndex: "100",
+		border: "4px solid white",
+		width: "25rem",
+		height: "20rem",
+		// borderRadius: '50%',
+	},
+});
+
+function MainPage() {
+	const navigate = useNavigate();
+
+	const classes = useStyles();
+	const [selectedFile, setSelectedFile] = useState(null);
+	const [imageSrc, setImageSrc] = useState(null);
+	const [toggle, setToggle] = useState(false);
+	const [uploadImage, setUploadImage] = useState(false);
+	const [stream, setStream] = useState(null);
+	const [color, setColor] = useState();
+	const videoRef = useRef(null);
+	const imageRef = useRef(null);
+	const [loading, setLoading] = useState(false);
+	const [result, setResult] = useState({});
+
+	const handleFileChange = (e) => {
+		setSelectedFile(e.target.files[0]);
+	};
+
+	const dataURLToFile = (dataUrl, filename) => {
+		const arr = dataUrl.split(",");
+		const mime = arr[0].match(/:(.*?);/)[1];
+		const bstr = atob(arr[1]);
+		let n = bstr.length;
+		const u8arr = new Uint8Array(n);
+		while (n--) {
+			u8arr[n] = bstr.charCodeAt(n);
+		}
+		return new File([u8arr], filename, { type: mime });
+	};
+
+	// useEffect( () => {
+	// 	async function sendCamera(){
+
+	// 	sendCamera()
+	// }, [imageSrc]);
+
+	const handleStartCamera = async (e) => {
+		setUploadImage(false);
+		if (e == "Open") {
+			setToggle(!toggle);
+		} else {
+			setImageSrc(null);
+		}
+
+		navigator.mediaDevices
+			.getUserMedia({ video: true })
+			.then((stream) => {
+				videoRef.current.srcObject = stream;
+				setStream(stream);
+			})
+			.catch((error) => console.error(error));
+	};
+
+	const uploadImageBtnHandler = () => {
+		setUploadImage(!uploadImage);
+	};
+
+	const webcamRef = useRef(null);
+
+	const handleTakePicture = React.useCallback(async () => {
+		const imageSrc = webcamRef.current.getScreenshot();
+		setImageSrc(imageSrc);
+	}, [webcamRef]);
+
+	// const handleTakePicture = () => {
+	// 	const canvas = document.createElement("canvas");
+	// 	canvas.width = videoRef.current.videoWidth;
+	// 	canvas.height = videoRef.current.videoHeight;
+	// 	canvas.getContext("2d").drawImage(videoRef.current, 0, 0, videoRef.current.videoWidth, videoRef.current.videoHeight);
+	// 	const dataUrl = canvas.toDataURL("image/png");
+	// 	setImageSrc(dataUrl);
+	// };
+
+	const handleCloseCamera = () => {
+		setToggle(!toggle);
+		window.location.reload(false);
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		// Perform your submit logic here
+		console.log(selectedFile);
+		setLoading(true);
+
+		const formdata = new FormData();
+		formdata.append("file", selectedFile);
+
+		const url = `${window.baseURL}`;
+		const options = {
+			method: "POST",
+			body: formdata,
+			processData: false,
+			contentType: false,
+			mimeType: "multipart/form-data",
+			headers: {
+				"X-CSRFToken": Cookies.get("csrftoken"),
+			},
+		};
+		fetch(url, options)
+			.then((response) => response.json())
+			.then((data) => {
+				console.log("Success:", data);
+				setLoading(false);
+				setResult(data);
+				navigate("/detail", { state: { value: data } });
+			});
+	};
+
+	const proceedHandler = async () => {
+		var temp = {}
+		if (imageSrc != null) {
+			console.log("This is image Ref", imageSrc);
+			setLoading(true);
+			// imageStr = imageSrc.split(",")[1];
+
+			const response = await fetch(imageSrc);
+			const blob = await response.blob();
+
+			var formdata = new FormData();
+			formdata.append("file", blob, "image.jpg");
+
+			const url = `${window.baseURL}`;
+
+			const options = {
+				method: "POST",
+				body: formdata,
+				processData: false,
+				contentType: false,
+				mimeType: "multipart/form-data",
+				headers: {
+					"X-CSRFToken": Cookies.get("csrftoken"),
+				},
+			};
+			await fetch(url, options)
+				.then((response) => response.json())
+				.then((result) => {
+					console.log(result);
+					setColor(result?.color);
+					setLoading(false);
+					setResult(result);
+					temp = result
+				})
+				.catch((error) => console.log("error", error));
+		}
+
+		if (stream) {
+			await stream.getTracks().forEach((track) => track.stop());
+			setStream(null);
+		}
+		navigate("/detail", { state: { value: temp } });
+	};
+
+	return (
+		<>
+			<Topbar />
+			<Container
+				sx={{
+					color: "white",
+					padding: "5em 1em",
+					minHeight: "100vh",
+				}}
+			>
+				<div style={{ color: "green" }}>
+					{loading && <Loader />}
+					<div>
+						<center>
+							<Typography
+								variant="h3"
+								component="p"
+								sx={{
+									padding: "1em",
+									fontSize: "2rem",
+									"@media (max-width: 600px)": {
+										fontSize: "1.5rem",
+										padding: "0.5em",
+									},
+								}}
+							>
+								Calculate Nitrogen Deficiency
+							</Typography>
+							{uploadImage && (
+								<div>
+									<form className="text-center" onSubmit={handleSubmit}>
+										<div class="form-group row">
+											<div className="col-md-3"></div>
+											<div className="col-md-6">
+												<input type="file" class="form-control" accept=".jpg,.png,.jpeg" onChange={handleFileChange} />
+											</div>
+											<div className="col-md-3 p-0"></div>
+										</div>
+										<Button type="submit" variant="contained" color="warning" className="mt-4">
+											Submit
+										</Button>
+									</form>
+								</div>
+							)}
+						</center>
+					</div>
+					<div>
+						{imageSrc ? (
+							<center>
+								<br />
+								{toggle ? (
+									<>
+										<div style={{ position: "relative", paddingBottom: "56.25%", paddingTop: "0", height: "0" }}>
+											<img src={imageSrc} style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }} />
+											{/* <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "90vh" }}>
+												<div className={classes.circle}>
+													<span>
+														<h6>Targeted Area</h6>
+													</span>
+												</div>
+											</div> */}
+											<div
+												style={{
+													position: "absolute",
+													top: "50%",
+													left: "50%",
+													transform: "translate(-50%, -50%)",
+													width: "50%",
+													height: "70%",
+													// backgroundColor: "rgba(255, 255, 255, 0.5)",
+													display: "flex",
+													justifyContent: "center",
+													alignItems: "center",
+													border: "5px solid white",
+												}}
+											>
+												<h6>Targeted Area</h6>
+											</div>
+										</div>
+
+										<div className={classes.colorStatus}>
+											<h2>
+												<strong>RGB Code: </strong>
+												{color}
+											</h2>
+										</div>
+										<br />
+										<br />
+										<br />
+										<div
+										// style={{
+										// 	display: "flex",
+										// 	justifyContent: "space-evenly",
+										// }}
+										>
+											<Button
+												variant="filled"
+												sx={{
+													margin: "10px 2em",
+													borderRadius: "11px",
+													border: "1px solid green",
+													color: "green",
+													"&:hover": {
+														color: "black",
+														borderRadius: "11px",
+														border: "1px solid black",
+													},
+												}}
+												startIcon={<CameraAltIcon />}
+												onClick={() => handleStartCamera("Retake")}
+											>
+												<span className={classes.takePicture}>Retake Picture</span>
+											</Button>
+
+											<Button
+												variant="filled"
+												sx={{
+													margin: "10px 2em",
+													borderRadius: "11px",
+													border: "1px solid green",
+													color: "green",
+													"&:hover": {
+														color: "black",
+														borderRadius: "11px",
+														border: "1px solid black",
+													},
+												}}
+												startIcon={<ArrowRightAlt />}
+												onClick={proceedHandler}
+											>
+												<span className={classes.takePicture}>Proceed</span>
+											</Button>
+
+											<Button
+												variant="filled"
+												sx={{
+													margin: "10px 2em",
+													borderRadius: "11px",
+													border: "1px solid green",
+													color: "green",
+													"&:hover": {
+														color: "black",
+														borderRadius: "11px",
+														border: "1px solid black",
+													},
+												}}
+												startIcon={<NotInterestedIcon />}
+												onClick={handleCloseCamera}
+											>
+												<span className={classes.takePicture}>Close Camera</span>
+											</Button>
+										</div>
+									</>
+								) : (
+									<Button
+										variant="filled"
+										sx={{
+											margin: "2em 2em 2em 2em",
+											borderRadius: "11px",
+											border: "1px solid green",
+											color: "green",
+											"@media (max-width: 600px)": {
+												border: "none",
+											},
+											"&:hover": {
+												color: "black",
+												borderRadius: "11px",
+												border: "1px solid black",
+											},
+										}}
+										startIcon={<CameraAltIcon />}
+										onClick={handleStartCamera}
+									>
+										Open Camera
+									</Button>
+								)}
+							</center>
+						) : (
+							<center>
+								{toggle ? (
+									<>
+										{/* <div style={{ position: "relative", paddingBottom: "56.25%", paddingTop: "0", height: "0" }} >
+											<video src="your-video.mp4" className="text-center" style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }} ref={videoRef} autoPlay={true}></video>
+											<div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "90vh" }}>
+												<div className={classes.circle}>
+													<span style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", height: "100%", fontSize: "0.5em" }}>
+														<h6>Targeted Area</h6>
+													</span>
+												</div>
+											</div>
+										</div> */}
+										<div style={{ position: "relative", paddingTop: "56.25%", height: 0 }}>
+											{/* <video src="your-video.mp4" className="text-center" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }} ref={videoRef} autoPlay></video> */}
+											<Webcam
+												audio={false}
+												ref={webcamRef}
+												screenshotFormat="image/jpeg"
+												// width={100}
+												style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }}
+												// height={100}
+												videoConstraints={{
+													facingMode: "user",
+												}}
+											/>
+											<div
+												style={{
+													position: "absolute",
+													top: "50%",
+													left: "50%",
+													transform: "translate(-50%, -50%)",
+													width: "50%",
+													height: "70%",
+													// backgroundColor: "rgba(255, 255, 255, 0.5)",
+													display: "flex",
+													justifyContent: "center",
+													alignItems: "center",
+													border: "5px solid white",
+												}}
+											>
+												<h6>Targeted Area</h6>
+											</div>
+										</div>
+
+										<br />
+										<br />
+										<br />
+
+										<div
+										// style={{
+										// 	display: "flex",
+										// 	justifyContent: "space-evenly",
+										// }}
+										>
+											<Button
+												variant="filled"
+												sx={{
+													margin: "10px 2rem",
+													borderRadius: "11px",
+													border: "1px solid green",
+													color: "green",
+													"&:hover": {
+														color: "black",
+														borderRadius: "11px",
+														border: "1px solid black",
+													},
+												}}
+												startIcon={<CameraAltIcon />}
+												onClick={handleTakePicture}
+											>
+												<span className={classes.takePicture}>Take Picture</span>
+											</Button>
+
+											<Button
+												variant="filled"
+												sx={{
+													margin: "10px 2rem",
+													borderRadius: "11px",
+													border: "1px solid green",
+													color: "green",
+													"&:hover": {
+														color: "black",
+														borderRadius: "11px",
+														border: "1px solid black",
+													},
+													// "@media (max-width: 600px)": {
+													// 	border: "none",
+													// },
+												}}
+												startIcon={<NotInterestedIcon />}
+												onClick={handleCloseCamera}
+											>
+												<span className={classes.takePicture}>Close Camera</span>
+											</Button>
+										</div>
+									</>
+								) : (
+									//This is Camera
+									<div className="mt-5">
+										<Button
+											variant="filled"
+											sx={{
+												margin: "10px 2rem",
+												borderRadius: "11px",
+												border: "1px solid green",
+												color: "green",
+												"&:hover": {
+													color: "black",
+													borderRadius: "11px",
+													border: "1px solid black",
+												},
+											}}
+											startIcon={<CameraAltIcon />}
+											onClick={() => handleStartCamera("Open")}
+										>
+											<span className={classes.takePicture}>Open Camera</span>
+										</Button>
+										{/* <button >Upload Image</button> */}
+										<Button
+											variant="filled"
+											sx={{
+												margin: "10px 2rem",
+												borderRadius: "11px",
+												border: "1px solid green",
+												color: "green",
+												"&:hover": {
+													color: "black",
+													borderRadius: "11px",
+													border: "1px solid black",
+												},
+											}}
+											startIcon={<UploadFile />}
+											onClick={uploadImageBtnHandler}
+										>
+											<span className={classes.takePicture}>Upload Image</span>
+										</Button>
+									</div>
+								)}
+
+								{/* <button onClick={handleTakePicture}>Take Picture</button> */}
+							</center>
+						)}
+					</div>
+				</div>
+			</Container>
+		</>
+	);
 }
 
 export default MainPage;

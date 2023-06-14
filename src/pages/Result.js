@@ -2,6 +2,8 @@ import React, {useEffect} from "react";
 import { Button, Container, Typography } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
+import Topbar from "../ui/Navbar";
+
 
 
 
@@ -10,14 +12,15 @@ function Result() {
 	const location = useLocation();
 	const value = location.state.value;
 	const result = location.state.result;
-
+	console.log(result)
 
 	const styles = {
 		padding: '20px',
-		border: '3px solid #ffffff',
+		border: '3px solid #E7A218',
 		borderRadius: '5px',
 	  };
-	return (
+	return (<>
+		<Topbar />
 		<Container
 			style={{ height: "100vh" }}
 			sx={{
@@ -30,17 +33,59 @@ function Result() {
 					<div style={styles}>
 						<Row className="mb-4">
 							<Col>
-								<h2>As Known, Nitrogen required per plant is 2% - 4 %</h2>
+							<Typography
+								variant="h3"
+								component="p"
+								sx={{
+									padding: "0.5em",
+									fontSize: "2rem",
+									color:'green',
+									"@media (max-width: 600px)": {
+										fontSize: "1.2rem",
+										padding: "0",
+									},
+								}}
+							>
+								As Known, Nitrogen required per plant is 2% - 4 %
+							</Typography>
 							</Col>
 						</Row>
 						<Row className="mb-4">
 							<Col>
-								<h2>Nitrogen Deficiency found is <u> {result.deficiency_percent}% </u></h2>
+							<Typography
+								variant="h3"
+								// component="p"
+								sx={{
+									padding: "0.5em",
+									fontSize: "2rem",
+									color:'green',
+									"@media (max-width: 600px)": {
+										fontSize: "1.2rem",
+										padding: "0",
+									},
+								}}
+							>
+								Nitrogen Deficiency found is <u> {result.deficiency_percent}% </u>
+							</Typography>
 							</Col>
 						</Row>
 						<Row>
 							<Col>
-								<h4>Fertilizer required for removing the deficiency from the field is <u> {value} </u></h4>
+							<Typography
+								variant="h3"
+								component="p"
+								sx={{
+									padding: "0.5em",
+									fontSize: "2rem",
+									color:'green',
+									"@media (max-width: 600px)": {
+										fontSize: "1.2rem",
+										padding: "0",
+									},
+								}}
+							>
+								Fertilizer required for removing the deficiency from the field is <u> {value} </u>
+							</Typography>
 							</Col>
 						</Row>
 					</div>
@@ -80,6 +125,7 @@ function Result() {
 				</div>
 			</center>
 		</Container>
+		</>
 	);
 }
 
