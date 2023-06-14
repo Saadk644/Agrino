@@ -384,18 +384,18 @@ function MainPage() {
 								{toggle ? (
 									<>
 										{/* <div style={{ position: "relative", paddingBottom: "56.25%", paddingTop: "0", height: "0" }} >
-											<video src="your-video.mp4" className="text-center" style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }} ref={videoRef} autoPlay={true}></video>
 											<div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "90vh" }}>
-												<div className={classes.circle}>
-													<span style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", height: "100%", fontSize: "0.5em" }}>
-														<h6>Targeted Area</h6>
-													</span>
-												</div>
+											<div className={classes.circle}>
+											<span style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", height: "100%", fontSize: "0.5em" }}>
+											<h6>Targeted Area</h6>
+											</span>
+											</div>
 											</div>
 										</div> */}
 										<div style={{ position: "relative", paddingTop: "56.25%", height: 0 }}>
 											{/* <video src="your-video.mp4" className="text-center" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }} ref={videoRef} autoPlay></video> */}
-											<Webcam
+										<video src="your-video.mp4" className="text-center" style={{ position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }} ref={videoRef} autoPlay={true}></video>
+											{/* <Webcam
 												audio={false}
 												ref={webcamRef}
 												screenshotFormat="image/jpeg"
@@ -405,7 +405,7 @@ function MainPage() {
 												videoConstraints={{
 													facingMode: "user",
 												}}
-											/>
+											/> */}
 											<div
 												style={{
 													position: "absolute",
