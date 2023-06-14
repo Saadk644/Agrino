@@ -110,19 +110,19 @@ function MainPage() {
 
 	const webcamRef = useRef(null);
 
-	const handleTakePicture = React.useCallback(async () => {
-		const imageSrc = webcamRef.current.getScreenshot();
-		setImageSrc(imageSrc);
-	}, [webcamRef]);
+	// const handleTakePicture = React.useCallback(async () => {
+	// 	const imageSrc = webcamRef.current.getScreenshot();
+	// 	setImageSrc(imageSrc);
+	// }, [webcamRef]);
 
-	// const handleTakePicture = () => {
-	// 	const canvas = document.createElement("canvas");
-	// 	canvas.width = videoRef.current.videoWidth;
-	// 	canvas.height = videoRef.current.videoHeight;
-	// 	canvas.getContext("2d").drawImage(videoRef.current, 0, 0, videoRef.current.videoWidth, videoRef.current.videoHeight);
-	// 	const dataUrl = canvas.toDataURL("image/png");
-	// 	setImageSrc(dataUrl);
-	// };
+	const handleTakePicture = () => {
+		const canvas = document.createElement("canvas");
+		canvas.width = videoRef.current.videoWidth;
+		canvas.height = videoRef.current.videoHeight;
+		canvas.getContext("2d").drawImage(videoRef.current, 0, 0, videoRef.current.videoWidth, videoRef.current.videoHeight);
+		const dataUrl = canvas.toDataURL("image/png");
+		setImageSrc(dataUrl);
+	};
 
 	const handleCloseCamera = () => {
 		setToggle(!toggle);
