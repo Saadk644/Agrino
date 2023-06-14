@@ -14,7 +14,7 @@ body{
 .large-page {
   position: relative;
   width: 100vw;
-  height: 150vh;
+  height: 200vh;
   background-image: url('../images/bg.jpg');
   background-size:cover;
   background-position: center;
