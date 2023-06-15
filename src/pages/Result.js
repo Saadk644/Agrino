@@ -84,7 +84,7 @@ function Result() {
 												},
 											}}
 										>
-											Fertilizer required for removing the deficiency from the field is <u> {value} </u>
+											Fertilizer required for removing the deficiency from the field is <u> {value.toFixed(2)} lbs</u>
 										</Typography>
 									</Col>
 								</Row>
@@ -108,16 +108,16 @@ function Result() {
 										<td>Approved</td>
 										<td>01/01/2023</td>
 										<td>
-											<a href="https://www.woitsolutions.com">doc 1</a>
+											<a href="https://www.pnas.org/doi/epdf/10.1073/pnas.96.4.1175?download=true">doc 1</a>
 										</td>
 									</tr>
 									<tr>
 										<td>2</td>
 										<td>Name 2</td>
-										<td>Rejected</td>
+										<td>Approved</td>
 										<td>01/02/2023</td>
 										<td>
-											<a href="https://www.woitsolutions.com">doc 2</a>
+											<a href="https://www.pnas.org/doi/epdf/10.1073/pnas.96.4.1175?download=true">doc 2</a>
 										</td>
 									</tr>
 								</tbody>

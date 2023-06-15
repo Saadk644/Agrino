@@ -33,6 +33,9 @@ body{
   width: 350px; /* Adjust the width as needed */
   margin-bottom: 1rem;
 }
+.niab-logo {
+  width: 100px;
+}
 
 .form {
   width: 300px; /* Adjust the width as needed */

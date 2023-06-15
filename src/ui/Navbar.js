@@ -17,7 +17,7 @@ function Topbar() {
 					</Link>
 					<Nav className="ms-auto">
 						<Link to="/home">
-							<button className="btn btn-warning me-2">Calculate</button>
+							<button className="btn btn-warning me-2">Home</button>
 						</Link>
 					</Nav>
 				</Container>

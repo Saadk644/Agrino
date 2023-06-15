@@ -30,9 +30,25 @@ function Detail() {
 			setError(true);
 		} else {
 			console.log(data);
-
 			//perform calculations here
-			const formula = parseFloat(data.width) * parseFloat(data.height) * 50;
+			console.log(result)
+			if(data.area === "Marla"){
+				data.width = data.width * 272.25;
+				data.height = data.height * 272.25;
+			}
+			else if(data.area === "Kanal"){
+				data.width = data.width * 5445;
+				data.height = data.height * 5445;
+			}
+			else if(data.area === "Acre"){
+				data.width = data.width * 43560;
+				data.height = data.height * 43560;
+			}
+			else if(data.area === "Square Feet"){
+				data.width = data.width * 1;
+				data.height = data.height * 1;
+			}
+			const formula = parseFloat(data.width) * parseFloat(data.height) * result.deficiency_percent / 100 *  (Math.random() * (0.0034 - 0.0018) + 0.0018) ;
 			navigate("/results", { state: { value: formula, result: result } });
 		}
 	};
@@ -81,7 +97,7 @@ function Detail() {
 
 									<div class="form-group row mt-4">
 										<div for="" className="col-md-3 fs-5">
-											<label style={{ color: "white" }}>Height</label>
+											<label style={{ color: "white" }}>Length</label>
 										</div>
 										<div className="col-md-7">
 											<input type="number" min="0" step="0.01" class="form-control" placeholder="Enter Height" ref={height} />
