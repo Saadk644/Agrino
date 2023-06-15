@@ -104,7 +104,7 @@ function Result() {
 								<tbody>
 									<tr>
 										<td>1</td>
-										<td>Name 1</td>
+										<td>Nitrox</td>
 										<td>Approved</td>
 										<td>01/01/2023</td>
 										<td>
@@ -113,7 +113,7 @@ function Result() {
 									</tr>
 									<tr>
 										<td>2</td>
-										<td>Name 2</td>
+										<td>Fauji Nitrate</td>
 										<td>Approved</td>
 										<td>01/02/2023</td>
 										<td>
